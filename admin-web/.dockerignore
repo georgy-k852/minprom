@@ -1,0 +1,6 @@
+/.idea
+/venv
+/.env.example
+/Dockerfile.example
+README.md
+.gitignore

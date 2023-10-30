@@ -1,0 +1,55 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES__USER}
+      POSTGRES_PASSWORD: ${POSTGRES__PASSWORD}
+      POSTGRES_DB: ${POSTGRES__DATABASE}
+      POSTGRES_PORT: ${POSTGRES__PORT}
+    ports:
+      - "${POSTGRES__PORT}:${POSTGRES__PORT}"
+    command: -p ${POSTGRES__PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./pg_dump/minprom-pg.sql:/docker-entrypoint-initdb.d/minprom-pg.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -p ${POSTGRES__PORT} -U ${POSTGRES__USER} -d ${POSTGRES__DATABASE}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    image: bot
+    container_name: bot
+    restart: always
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  admin-web:
+    build:
+      context: admin-web
+    expose:
+      - 8000
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./admin-web:/admin-web
+    depends_on:
+      postgres:
+        condition: service_healthy
