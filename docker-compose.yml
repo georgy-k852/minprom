@@ -6,7 +6,7 @@ volumes:
 services:
   postgres:
     image: postgres
-    container_name: postgres
+    container_name: postgres-minprom
     restart: always
     env_file:
       - .env
@@ -20,7 +20,6 @@ services:
     command: -p ${POSTGRES__PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./pg_dump/minprom-pg.sql:/docker-entrypoint-initdb.d/minprom-pg.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -p ${POSTGRES__PORT} -U ${POSTGRES__USER} -d ${POSTGRES__DATABASE}" ]
       interval: 10s
@@ -45,6 +44,8 @@ services:
       context: admin-web
     expose:
       - 8000
+    ports:
+      - "8000:8000"
     restart: unless-stopped
     env_file:
       - .env
@@ -53,3 +54,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  pg_dump:
+    image: pg_dump
+    container_name: pg_dump
+#    restart: always
+    build:
+      context: .
+      dockerfile: pg_dump/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - bot
