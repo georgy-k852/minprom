@@ -1,8 +1,10 @@
+import uuid
+
 from django.db import models
 
 
 class Role(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     creation_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100)
 

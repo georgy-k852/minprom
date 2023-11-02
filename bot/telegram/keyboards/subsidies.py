@@ -27,6 +27,6 @@ def get_list_documents_keyboard() -> types.InlineKeyboardMarkup:
             [types.InlineKeyboardButton(text='Приложение 3 (справка-расчет)', callback_data='share_doc_3')],
             [types.InlineKeyboardButton(text='Приложение 4 (паспорт инвестпроекта)', callback_data='share_doc_4')],
             [types.InlineKeyboardButton(text='Приложение 5 (реестр документов)', callback_data='share_doc_5')],
-            [types.InlineKeyboardButton(text='Приложение 6 (согласие)', callback_data='share_doc_6')]
+            [types.InlineKeyboardButton(text='Приложение 6 (согласие)', callback_data='share_doc_6')],
         ]
     )
